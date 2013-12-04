@@ -31,6 +31,11 @@ if (dialect.match(/^postgres/)) {
         done()
       })
 
+      it("handles empty strings correctly", function(done) {
+        expect(hstore.stringifyPart('')).to.equal('""')
+        done()
+      })
+
       it("handles strings with backslashes correctly", function(done) {
         expect(hstore.stringifyPart("\\'literally\\'")).to.equal('"\\\\\'literally\\\\\'"')
         done()
@@ -68,6 +73,16 @@ if (dialect.match(/^postgres/)) {
         done()
       })
 
+      it('should handle empty strings correctly', function(done) {
+        expect(hstore.stringify({ empty: "" })).to.equal('"empty"=>""')
+        done()
+      })
+
+      it('should handle nested empty strings correctly', function(done) {
+        expect(hstore.stringify({ empty: '""' })).to.equal('"empty"=>"\"\""')
+        done()
+      })
+
       it('should handle simple objects correctly', function(done) {
         expect(hstore.stringify({ test: 'value' })).to.equal('"test"=>"value"')
         done()
@@ -92,6 +107,16 @@ if (dialect.match(/^postgres/)) {
     describe('parse', function() {
       it('should handle empty objects correctly', function(done) {
         expect(hstore.parse('')).to.deep.equal({ })
+        done()
+      })
+
+      it('should handle empty strings correctly', function(done) {
+        expect(hstore.parse('"empty"=>""')).to.deep.equal({empty : "" })
+        done()
+      })
+
+      it('should handle a nested empty string correctly', function(done) {
+        expect(hstore.parse('"empty"=>"\"\""')).to.deep.equal({empty : '""' })
         done()
       })
 
